@@ -31,4 +31,5 @@ node_modules
 # generated files for running processes
 runningForks.json
 *.pid
+glue.pid.*
 glueConfig.json

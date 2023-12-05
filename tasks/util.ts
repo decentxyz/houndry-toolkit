@@ -59,15 +59,13 @@ export const dumpJson = async (file: string, content: any) => {
 };
 
 export const startCmd = (cmd: string) => {
-  console.log(`running comand; ${cmd}`);
+  console.log(`running command: ${cmd}`);
   const [command, ...args] = cmd.split(/\s+/);
   const spawned = spawn(command, args, { detached: true, stdio: "ignore" });
   const { pid } = spawned;
   if (!pid) {
     throw Error(`no pid for ${cmd}`);
   }
-
-  console.log("spawned", JSON.stringify(spawned, null, 2));
 
   return pid;
 };

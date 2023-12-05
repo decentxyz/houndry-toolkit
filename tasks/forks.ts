@@ -2,14 +2,14 @@ import {
   chainIdLookup,
   dumpJson,
   getRpc,
-  killIfExists,
   killProcess,
   Lookup,
   processExists,
   startCmd,
 } from "./util";
 import { task } from "hardhat/config";
-import { readJson, readJsonIfExists } from "./file";
+import { readJson } from "./file";
+import { exec } from "shelljs";
 
 type ForkInfo = {
   chain: string;
@@ -99,19 +99,15 @@ export const saveAndStartGlue = async () => {
   await saveForks();
 };
 
-const GLUE_FILE = "glue.pid";
 const GLUE_CONFIG = "glueConfig.json";
 
 export const kickOffGlueService = async () => {
   await stopGlueService();
-  const newPid = startCmd(`pnpm run-glue`);
-  await dumpJson(GLUE_FILE, { pid: newPid });
+  startCmd(`pnpm run-glue`);
 };
 
 export const stopGlueService = async () => {
-  const { pid } = (await readJsonIfExists<{ pid?: number }>(GLUE_FILE)) || {};
-  console.log(`stopping the glue service: ${pid}`);
-  killIfExists(pid);
+  exec(`pkill -f run-glue`);
 };
 
 export const dumpGlueConfig = async () => {
@@ -150,6 +146,15 @@ task<{ chains: string }>(
     await saveAndStartGlue();
   },
 ).addParam("chains", "comma-separated list of chains");
+
+task("start-glue", "starts the glue service", async ({ chains }) => {
+  await getForks();
+  await saveAndStartGlue();
+});
+
+task("stop-glue", "starts the glue service", async ({ chains }) => {
+  await stopGlueService();
+});
 
 task("list-forks", "lists all running forks", async () => {
   const forks = await getForks();
