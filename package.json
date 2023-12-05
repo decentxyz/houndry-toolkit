@@ -4,23 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "task": "hardhat"
   },
   "keywords": [],
   "author": "arshan",
   "license": "ISC",
   "devDependencies": {
+    "@nomicfoundation/hardhat-foundry": "^1.1.1",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^2.0.0",
     "@nomicfoundation/hardhat-viem": "^1.0.0",
     "hardhat": "^2.14.0",
     "prettier": "^3.1.0",
     "prettier-plugin-solidity": "^1.2.0",
+    "shelljs": "^0.8.5",
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
     "typescript": "~5.0.4",
-    "viem": "^1.15.1",
-    "@nomicfoundation/hardhat-foundry": "^1.1.1",
-    "shelljs": "^0.8.5"
+    "viem": "^1.15.1"
+  },
+  "dependencies": {
+    "@types/shelljs": "^0.8.15",
+    "dotenv": "^16.3.1"
   }
 }
