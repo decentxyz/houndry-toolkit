@@ -27,4 +27,8 @@ node_modules
 
 .idea
 
+
+# generated files for running processes
 runningForks.json
+*.pid
+glueConfig.json

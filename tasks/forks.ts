@@ -1,8 +1,15 @@
-import { readFile, writeFile } from "fs";
-import { exec } from "shelljs";
-import { spawn } from "child_process";
-import { getRpc, Lookup, processExists } from "./util";
+import {
+  chainIdLookup,
+  dumpJson,
+  getRpc,
+  killIfExists,
+  killProcess,
+  Lookup,
+  processExists,
+  startCmd,
+} from "./util";
 import { task } from "hardhat/config";
+import { readJson, readJsonIfExists } from "./file";
 
 type ForkInfo = {
   chain: string;
@@ -15,18 +22,10 @@ type PidFile = Lookup<string, ForkInfo>;
 const RUNNING_FORKS: PidFile = {};
 
 const FORKS_FILE = "runningForks.json";
+
 const getForks = async (): Promise<PidFile> => {
   if (Object.keys(RUNNING_FORKS).length === 0) {
-    const _loaded = await new Promise<PidFile>((resolve, reject) => {
-      readFile(FORKS_FILE, "utf-8", (err, data) => {
-        if (err || !data) {
-          resolve({});
-          return;
-        }
-        const forkFile: PidFile = JSON.parse(data);
-        resolve({ ...RUNNING_FORKS, ...forkFile });
-      });
-    });
+    const _loaded: PidFile = await readJson<PidFile>(FORKS_FILE);
     for (const key of Object.keys(_loaded)) {
       RUNNING_FORKS[key] = _loaded[key];
     }
@@ -46,17 +45,15 @@ const getForks = async (): Promise<PidFile> => {
   return RUNNING_FORKS;
 };
 
-const saveForks = async () => {
-  await getForks();
-  await new Promise<void>((resolve) => {
-    const info = JSON.stringify(RUNNING_FORKS, null, 2);
-    writeFile(FORKS_FILE, info, () => {
-      resolve();
-    });
-  });
-};
+const saveForks = async () => dumpJson(FORKS_FILE, await getForks());
 
-const startFork = async ({ chain, port }: { chain: string; port?: string }) => {
+const getNewFork = async ({
+  chain,
+  port,
+}: {
+  chain: string;
+  port?: string;
+}): Promise<ForkInfo> => {
   const rpc = getRpc(chain);
   const forks = await getForks();
 
@@ -72,35 +69,87 @@ const startFork = async ({ chain, port }: { chain: string; port?: string }) => {
     nextPort += 1;
   }
 
-  const cmd = `anvil -p ${nextPort} -f ${rpc}`;
-  console.log(`running comand; ${cmd}`);
-  const [command, ...args] = cmd.split(/\s+/);
-  const { pid } = spawn(command, args, { detached: true, stdio: "ignore" });
+  const pid = startCmd(`anvil -p ${nextPort} -f ${rpc}`);
 
-  if (!pid) {
-    throw Error(`could not start fork: "${cmd}"`);
-  }
-
-  const newFork: ForkInfo = {
+  const fork = {
     chain,
     pid,
     port: nextPort,
   };
 
-  forks[chain] = newFork;
+  console.log(`started new fork at :${JSON.stringify(fork, null, 2)}`);
+  return fork;
+};
 
-  console.log(`started new fork at :${JSON.stringify(newFork, null, 2)}`);
+const startSingleFork = async ({
+  chain,
+  port,
+}: {
+  chain: string;
+  port?: string;
+}) => {
+  const forks = await getForks();
+  forks[chain] = await getNewFork({ chain, port });
+  await saveAndStartGlue();
+};
 
+export const saveAndStartGlue = async () => {
+  await dumpGlueConfig();
+  await kickOffGlueService();
   await saveForks();
+};
+
+const GLUE_FILE = "glue.pid";
+const GLUE_CONFIG = "glueConfig.json";
+
+export const kickOffGlueService = async () => {
+  await stopGlueService();
+  const newPid = startCmd(`pnpm run-glue`);
+  await dumpJson(GLUE_FILE, { pid: newPid });
+};
+
+export const stopGlueService = async () => {
+  const { pid } = (await readJsonIfExists<{ pid?: number }>(GLUE_FILE)) || {};
+  console.log(`stopping the glue service: ${pid}`);
+  killIfExists(pid);
+};
+
+export const dumpGlueConfig = async () => {
+  const forks = await getForks();
+  const glueConfig = {
+    chains: Object.values(forks).map((fork) => {
+      if (!fork) {
+        throw Error("fork undfined? ");
+      }
+      return {
+        id: chainIdLookup[fork.chain]!,
+        rpc: `http://127.0.0.1:${fork.port}`,
+      };
+    }),
+  };
+
+  await dumpJson(GLUE_CONFIG, glueConfig);
 };
 
 task<{ chain: string; port?: string }>(
   "start-fork",
   "starts a fork of a chain",
-  startFork,
+  startSingleFork,
 )
   .addOptionalParam("chain", "chain alias", "ethereum")
   .addOptionalParam("port", "port to start on");
+
+task<{ chains: string }>(
+  "start-forks",
+  "starts forks of multiple chains",
+  async ({ chains }) => {
+    const forks = await getForks();
+    for (const chain of chains.split(",")) {
+      forks[chain] = await getNewFork({ chain });
+    }
+    await saveAndStartGlue();
+  },
+).addParam("chains", "comma-separated list of chains");
 
 task("list-forks", "lists all running forks", async () => {
   const forks = await getForks();
@@ -121,6 +170,7 @@ task("stop-all-forks", "lists all running forks", async (task, hre) => {
     }
     hre.run("stop-fork", { chain: fork.chain });
   });
+  await stopGlueService();
 });
 
 task<{ chain: string }>("stop-fork", " ", async ({ chain }) => {
@@ -132,7 +182,7 @@ task<{ chain: string }>("stop-fork", " ", async ({ chain }) => {
     return;
   }
 
-  exec(`kill -9 ${pid}`);
+  killProcess(pid);
   delete RUNNING_FORKS[chain];
   await saveForks();
 }).addParam("chain", "chain alias");
