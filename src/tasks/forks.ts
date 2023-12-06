@@ -13,9 +13,9 @@ import { exec } from "shelljs";
 
 const GLUE_CONFIG = "glueConfig.json";
 
-const relativePath = "../..";
-
-const GLUE_CMD = `${__dirname}/${relativePath}/node_modules/.bin/forknet-glue`;
+const name = "houndry-toolkit";
+const path = __dirname.substring(0, __dirname.lastIndexOf(name));
+const GLUE_CMD = `${path}/${name}/node_modules/.bin/forknet-glue`;
 
 type ForkInfo = {
   chain: string;
