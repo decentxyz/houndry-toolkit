@@ -8,7 +8,7 @@ import {
   startCmd,
 } from "./util";
 import { task } from "hardhat/config";
-import { readJson } from "./file";
+import { readJsonIfExists } from "./file";
 import { exec } from "shelljs";
 
 type ForkInfo = {
@@ -25,7 +25,7 @@ const FORKS_FILE = "runningForks.json";
 
 const getForks = async (): Promise<PidFile> => {
   if (Object.keys(RUNNING_FORKS).length === 0) {
-    const _loaded: PidFile = await readJson<PidFile>(FORKS_FILE);
+    const _loaded = (await readJsonIfExists<PidFile>(FORKS_FILE)) || {};
     for (const key of Object.keys(_loaded)) {
       RUNNING_FORKS[key] = _loaded[key];
     }
