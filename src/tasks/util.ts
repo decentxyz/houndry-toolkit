@@ -7,6 +7,7 @@ export enum ChainId {
   ARBITRUM = 42161,
   OPTIMISM = 10,
   ZORA = 7777777,
+  BASE = 8453,
   ZORA_GOERLI = 999,
   SEPOLIA = 11155111,
 }
@@ -16,6 +17,7 @@ export const chainIdLookup: Lookup<string, ChainId> = {
   arbitrum: ChainId.ARBITRUM,
   optimism: ChainId.OPTIMISM,
   zora: ChainId.ZORA,
+  base: ChainId.BASE,
   zoraGoerli: ChainId.ZORA_GOERLI,
   sepolia: ChainId.SEPOLIA,
 };

@@ -123,8 +123,12 @@ export const dumpGlueConfig = async () => {
       if (!fork) {
         throw Error("fork undfined? ");
       }
+      const chainId = chainIdLookup[fork.chain];
+      if (!chainId) {
+        throw Error(`no chainid? ${fork.chain}`);
+      }
       return {
-        id: chainIdLookup[fork.chain]!,
+        id: chainId,
         rpc: `http://127.0.0.1:${fork.port}`,
       };
     }),
