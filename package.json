@@ -1,13 +1,13 @@
 {
   "name": "@arshankhanifar/houndry-toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
-  "main": "dist/index.mjs",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "task": "hardhat",
     "run-glue": "forknet-glue",
-    "build": "tsup src/index.ts --format esm --clean --minify --metafile",
+    "build": "tsup src/index.ts --format cjs --clean --minify --metafile",
     "publish:package": "pnpm run build && pnpm pack && pnpm publish --access public"
   },
   "keywords": [],
