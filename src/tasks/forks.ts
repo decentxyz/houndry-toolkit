@@ -11,6 +11,12 @@ import { task } from "hardhat/config";
 import { readJsonIfExists } from "./file";
 import { exec } from "shelljs";
 
+const GLUE_CONFIG = "glueConfig.json";
+
+const relativePath = "../..";
+
+const GLUE_CMD = `${__dirname}/${relativePath}/node_modules/.bin/forknet-glue`;
+
 type ForkInfo = {
   chain: string;
   port: number;
@@ -98,10 +104,6 @@ export const saveAndStartGlue = async () => {
   await kickOffGlueService();
   await saveForks();
 };
-
-const GLUE_CONFIG = "glueConfig.json";
-
-const GLUE_CMD = `../node_modules/.bin/forknet-glue`;
 
 export const kickOffGlueService = async () => {
   await stopGlueService();
