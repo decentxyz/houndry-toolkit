@@ -60,6 +60,7 @@ const getNewFork = async ({
   chain: string;
   port?: number;
 }): Promise<ForkInfo> => {
+  port = port !== undefined ? Number(port) : port;
   const rpc = getRpc(chain);
   const forks = await getForks();
 
@@ -94,6 +95,7 @@ const startSingleFork = async ({
   chain: string;
   port?: number;
 }) => {
+  port = port !== undefined ? Number(port) : port;
   const forks = await getForks();
   forks[chain] = await getNewFork({ chain, port });
   await saveAndStartGlue();
@@ -137,7 +139,7 @@ task<{ chain: string; port?: number }>(
   startSingleFork,
 )
   .addOptionalParam("chain", "chain alias", "ethereum")
-  .addOptionalParam<number>("port", "port to start on");
+  .addOptionalParam<number>("port", "port to start on", 6969);
 
 task<{ chains: string }>(
   "start-forks",
