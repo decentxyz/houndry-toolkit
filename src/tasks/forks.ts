@@ -58,7 +58,7 @@ const getNewFork = async ({
   port,
 }: {
   chain: string;
-  port?: string;
+  port?: number;
 }): Promise<ForkInfo> => {
   const rpc = getRpc(chain);
   const forks = await getForks();
@@ -70,7 +70,7 @@ const getNewFork = async ({
 
   const ports = new Set(Object.values(forks || {}).map((info) => info?.port));
 
-  let nextPort = port === undefined ? 8545 : Number(port);
+  let nextPort = port === undefined ? 8545 : port;
   while (ports.has(nextPort)) {
     nextPort += 1;
   }
@@ -92,7 +92,7 @@ const startSingleFork = async ({
   port,
 }: {
   chain: string;
-  port?: string;
+  port?: number;
 }) => {
   const forks = await getForks();
   forks[chain] = await getNewFork({ chain, port });
@@ -131,13 +131,13 @@ export const dumpGlueConfig = async () => {
   await dumpJson(GLUE_CONFIG, glueConfig);
 };
 
-task<{ chain: string; port?: string }>(
+task<{ chain: string; port?: number }>(
   "start-fork",
   "starts a fork of a chain",
   startSingleFork,
 )
   .addOptionalParam("chain", "chain alias", "ethereum")
-  .addOptionalParam("port", "port to start on");
+  .addOptionalParam<number>("port", "port to start on");
 
 task<{ chains: string }>(
   "start-forks",
