@@ -1,6 +1,6 @@
 {
   "name": "@arshankhanifar/houndry-toolkit",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "hardhat": "^2.14.0",
-    "@arshankhanifar/forknet-glue": "^0.0.2",
+    "@arshankhanifar/forknet-glue": "^0.0.3",
     "shelljs": "^0.8.5",
     "@types/shelljs": "^0.8.15",
     "dotenv": "^16.3.1",

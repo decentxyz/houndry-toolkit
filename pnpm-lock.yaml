@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@arshankhanifar/forknet-glue':
-    specifier: ^0.0.2
-    version: 0.0.2(react@18.2.0)(ts-node@10.9.1)(typescript@5.0.4)
+    specifier: ^0.0.3
+    version: 0.0.3(react@18.2.0)(ts-node@10.9.1)(typescript@5.0.4)
   '@types/shelljs':
     specifier: ^0.8.15
     version: 0.8.15
@@ -61,8 +61,8 @@ packages:
   /@adraffy/ens-normalize@1.10.0:
     resolution: {integrity: sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==}
 
-  /@arshankhanifar/forknet-glue@0.0.2(react@18.2.0)(ts-node@10.9.1)(typescript@5.0.4):
-    resolution: {integrity: sha512-P+A5R5nWFLimogigaGUSSp1gtZ6enLx7eIufsPHFoYB8Z+xrK94xKy6QU17NWE9u7xJCls2G4oAYG9Gt84rNdw==}
+  /@arshankhanifar/forknet-glue@0.0.3(react@18.2.0)(ts-node@10.9.1)(typescript@5.0.4):
+    resolution: {integrity: sha512-PgE1AJ86BkMtY5rcwl4PNwn0V0c8/9sstaWgkxh4wb3ZAI5qBswpBZn/pU0kXaLIBvk6EyWGkEZM33C6oC7aeA==}
     engines: {node: '>=14.16'}
     hasBin: true
     dependencies:
