@@ -139,7 +139,7 @@ task<{ chain: string; port?: number }>(
   startSingleFork,
 )
   .addOptionalParam("chain", "chain alias", "ethereum")
-  .addOptionalParam<number>("port", "port to start on", 6969);
+  .addOptionalParam<number>("port", "port to start on");
 
 task<{ chains: string }>(
   "start-forks",
