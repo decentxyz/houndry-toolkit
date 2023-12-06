@@ -56,9 +56,11 @@ const saveForks = async () => dumpJson(FORKS_FILE, await getForks());
 const getNewFork = async ({
   chain,
   port,
+  additionalArgs = "",
 }: {
   chain: string;
   port?: number;
+  additionalArgs?: string;
 }): Promise<ForkInfo> => {
   port = port !== undefined ? Number(port) : port;
   const rpc = getRpc(chain);
@@ -76,7 +78,7 @@ const getNewFork = async ({
     nextPort += 1;
   }
 
-  const pid = startCmd(`anvil -p ${nextPort} -f ${rpc}`);
+  const pid = startCmd(`anvil -p ${nextPort} -f ${rpc} ${additionalArgs}`);
 
   const fork = {
     chain,
@@ -91,13 +93,15 @@ const getNewFork = async ({
 const startSingleFork = async ({
   chain,
   port,
+  additionalArgs,
 }: {
   chain: string;
   port?: number;
+  additionalArgs?: string;
 }) => {
   port = port !== undefined ? Number(port) : port;
   const forks = await getForks();
-  forks[chain] = await getNewFork({ chain, port });
+  forks[chain] = await getNewFork({ chain, port, additionalArgs });
   await saveAndStartGlue();
 };
 
@@ -143,7 +147,11 @@ task<{ chain: string; port?: number }>(
   startSingleFork,
 )
   .addOptionalParam("chain", "chain alias", "ethereum")
-  .addOptionalParam<number>("port", "port to start on");
+  .addOptionalParam<number>("port", "port to start on")
+  .addOptionalParam<string>(
+    "additionalArgs",
+    "additional args to pass to  anvil",
+  );
 
 task<{ chains: string }>(
   "start-forks",
