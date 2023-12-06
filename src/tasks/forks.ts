@@ -78,7 +78,9 @@ const getNewFork = async ({
     nextPort += 1;
   }
 
-  const pid = startCmd(`anvil -p ${nextPort} -f ${rpc} ${additionalArgs}`);
+  const pid = startCmd(
+    `mkdir -p .forks && anvil -p ${nextPort} -f ${rpc} ${additionalArgs} > .forks/${chain}.log 2>&1`,
+  );
 
   const fork = {
     chain,
