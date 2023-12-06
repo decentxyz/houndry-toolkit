@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",    "task": "hardhat",
-    "run-glue": "glue"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "task": "hardhat",
+    "run-glue": "forknet-glue",
+    "build": "tsup src/index.ts --format esm --clean --minify --metafile"
   },
   "keywords": [],
   "author": "arshan",
@@ -25,8 +27,9 @@
     "viem": "^1.15.1"
   },
   "dependencies": {
+    "@arshankhanifar/forknet-glue": "^0.0.2",
     "@types/shelljs": "^0.8.15",
     "dotenv": "^16.3.1",
-    "glue": "file:glue-0.0.0.tgz"
+    "tsup": "^8.0.1"
   }
 }
