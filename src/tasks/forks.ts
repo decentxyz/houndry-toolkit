@@ -101,7 +101,7 @@ export const saveAndStartGlue = async () => {
 
 const GLUE_CONFIG = "glueConfig.json";
 
-const GLUE_CMD = `node_modules/.bin/forknet-glue`;
+const GLUE_CMD = `./node_modules/.bin/forknet-glue`;
 
 export const kickOffGlueService = async () => {
   await stopGlueService();
