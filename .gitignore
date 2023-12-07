@@ -28,7 +28,8 @@ node_modules
 .idea
 
 dist
-arshankhanifar-houndry-toolkit-*.tgz
+
+*-houndry-toolkit-*.tgz
 
 # generated files for running processes
 runningForks.json

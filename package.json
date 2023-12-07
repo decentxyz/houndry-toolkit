@@ -1,5 +1,5 @@
 {
-  "name": "@arshankhanifar/houndry-toolkit",
+  "name": "@decent.xyz/houndry-toolkit",
   "version": "1.0.18",
   "description": "",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "hardhat": "^2.14.0",
-    "@arshankhanifar/forknet-glue": "^0.0.3",
+    "@decent.xyz/forknet-glue": "^0.0.3",
     "shelljs": "^0.8.5",
     "@types/shelljs": "^0.8.15",
     "dotenv": "^16.3.1",
