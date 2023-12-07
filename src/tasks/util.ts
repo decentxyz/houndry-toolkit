@@ -1,4 +1,4 @@
-import { writeFile } from "fs";
+import { writeFile, openSync } from "fs";
 import { spawn } from "child_process";
 import { exec } from "shelljs";
 
@@ -60,15 +60,23 @@ export const dumpJson = async (file: string, content: any) => {
   });
 };
 
-export const startCmd = (cmd: string) => {
+export const startCmd = (cmd: string, file: string) => {
   console.log(`running command: ${cmd}`);
+  const output = openSync(file, "a");
   const [command, ...args] = cmd.split(/\s+/);
-  const spawned = spawn(command, args, { detached: true, stdio: "ignore" });
-  const { pid } = spawned;
+  const child = spawn(
+    command,
+    args.filter((param) => Boolean(param)),
+    {
+      stdio: ["ignore", output, output],
+      detached: true,
+    },
+  );
+  const { pid } = child;
   if (!pid) {
     throw Error(`no pid for ${cmd}`);
   }
-
+  child.unref();
   return pid;
 };
 

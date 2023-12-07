@@ -8,8 +8,8 @@ import {
   startCmd,
 } from "./util";
 import { task } from "hardhat/config";
-import { readJsonIfExists } from "./file";
-import { exec } from "shelljs";
+import { readJson, readJsonIfExists } from "./file";
+import { mkdir } from "shelljs";
 
 const GLUE_CONFIG = "glueConfig.json";
 
@@ -53,6 +53,9 @@ const getForks = async (): Promise<PidFile> => {
 
 const saveForks = async () => dumpJson(FORKS_FILE, await getForks());
 
+const forkCmd = ({ chain, port }: { chain: string; port: number }) =>
+  `anvil -p ${port} -f ${getRpc(chain)}`;
+
 const getNewFork = async ({
   chain,
   port,
@@ -63,14 +66,11 @@ const getNewFork = async ({
   additionalArgs?: string;
 }): Promise<ForkInfo> => {
   port = port !== undefined ? Number(port) : port;
-  const rpc = getRpc(chain);
   const forks = await getForks();
-
   if (forks?.[chain]) {
     console.log(`${chain} fork already exists`);
     process.exit(1);
   }
-
   const ports = new Set(Object.values(forks || {}).map((info) => info?.port));
 
   let nextPort = port === undefined ? 8545 : port;
@@ -78,8 +78,11 @@ const getNewFork = async ({
     nextPort += 1;
   }
 
+  mkdir(".forks");
+  const outPath = `.forks/${chain}.log`;
   const pid = startCmd(
-    `mkdir -p .forks && anvil -p ${nextPort} -f ${rpc} ${additionalArgs} > .forks/${chain}.log 2>&1`,
+    `anvil -p ${nextPort} -f ${getRpc(chain)} ${additionalArgs}`,
+    outPath,
   );
 
   const fork = {
@@ -115,11 +118,16 @@ export const saveAndStartGlue = async () => {
 
 export const kickOffGlueService = async () => {
   await stopGlueService();
-  startCmd(GLUE_CMD);
+  mkdir(".forks");
+  const gluePid = startCmd(GLUE_CMD, ".forks/glue.log");
+  await dumpJson("glue.pid", { pid: gluePid });
 };
 
 export const stopGlueService = async () => {
-  exec(`pkill -f arshankhanifar/forknet-glue`);
+  const { pid: gluePid } = (await readJson<{ pid: number }>("glue.pid")) || {};
+  if (gluePid !== undefined && processExists(gluePid)) {
+    killProcess(gluePid);
+  }
 };
 
 export const dumpGlueConfig = async () => {
@@ -199,15 +207,16 @@ task("stop-all-forks", "lists all running forks", async (task, hre) => {
 });
 
 task<{ chain: string }>("stop-fork", " ", async ({ chain }) => {
-  await getForks();
-  const pid = RUNNING_FORKS[chain]?.pid;
-
-  if (!pid) {
-    console.log(`no pid found: ${chain}`);
+  const forks = await getForks();
+  const forkInfo = forks[chain];
+  if (!forkInfo) {
+    console.log(`no fork info found: ${chain}`);
     return;
   }
-
-  killProcess(pid);
+  const { pid, port } = forkInfo;
+  if (processExists(pid)) {
+    killProcess(pid);
+  }
   delete RUNNING_FORKS[chain];
   await saveForks();
 }).addParam("chain", "chain alias");

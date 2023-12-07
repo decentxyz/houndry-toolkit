@@ -35,3 +35,5 @@ runningForks.json
 *.pid
 glue.pid.*
 glueConfig.json
+
+.forks
