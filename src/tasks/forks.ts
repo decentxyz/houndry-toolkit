@@ -16,6 +16,7 @@ const GLUE_CONFIG = "glueConfig.json";
 const name = "houndry-toolkit";
 const path = __dirname.substring(0, __dirname.lastIndexOf(name));
 const GLUE_CMD = `${path}/${name}/node_modules/.bin/forknet-glue`;
+const GLUE_PID = "glue.pid";
 
 type ForkInfo = {
   chain: string;
@@ -120,11 +121,12 @@ export const kickOffGlueService = async () => {
   await stopGlueService();
   mkdir(".forks");
   const gluePid = startCmd(GLUE_CMD, ".forks/glue.log");
-  await dumpJson("glue.pid", { pid: gluePid });
+  await dumpJson(GLUE_PID, { pid: gluePid });
 };
 
 export const stopGlueService = async () => {
-  const { pid: gluePid } = (await readJson<{ pid: number }>("glue.pid")) || {};
+  const { pid: gluePid } =
+    (await readJsonIfExists<{ pid: number }>(GLUE_PID)) || {};
   if (gluePid !== undefined && processExists(gluePid)) {
     killProcess(gluePid);
   }
