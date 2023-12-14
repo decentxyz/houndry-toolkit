@@ -38,3 +38,5 @@ glue.pid.*
 glueConfig.json
 
 .forks
+
+.DS_Store

@@ -8,7 +8,7 @@ import {
   startCmd,
 } from "./util";
 import { task } from "hardhat/config";
-import { readJson, readJsonIfExists } from "./file";
+import { readJsonIfExists } from "./file";
 import { mkdir } from "shelljs";
 
 const GLUE_CONFIG = "glueConfig.json";
@@ -108,7 +108,8 @@ const startSingleFork = async ({
   port = port !== undefined ? Number(port) : port;
   const forks = await getForks();
   forks[chain] = await getNewFork({ chain, port, additionalArgs });
-  await saveAndStartGlue();
+  await dumpGlueConfig();
+  await saveForks();
 };
 
 export const saveAndStartGlue = async () => {
@@ -173,7 +174,8 @@ task<{ chains: string }>(
     for (const chain of chains.split(",")) {
       forks[chain] = await getNewFork({ chain });
     }
-    await saveAndStartGlue();
+    await dumpGlueConfig();
+    await saveForks();
   },
 ).addParam("chains", "comma-separated list of chains");
 
