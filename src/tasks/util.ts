@@ -1,25 +1,54 @@
 import { writeFile, openSync } from "fs";
 import { spawn } from "child_process";
 import { exec } from "shelljs";
+import { Base } from "hardhat/internal/hardhat-network/provider/modules/base";
 
 export enum ChainId {
   ETHEREUM = 1,
-  ARBITRUM = 42161,
-  OPTIMISM = 10,
-  ZORA = 7777777,
-  BASE = 8453,
-  ZORA_GOERLI = 999,
   SEPOLIA = 11155111,
+  GOERLI = 5,
+  OPTIMISM = 10,
+  OPTIMISM_TESTNET = 420,
+  POLYGON = 137,
+  POLYGON_TESTNET = 80001,
+  ARBITRUM = 42161,
+  ARBITRUM_TESTNET = 421613,
+  BASE = 8453,
+  ZORA = 7777777,
+  ZORA_GOERLI = 999,
+  BASE_TESTNET = 84531,
+  MOONBEAM = 1284,
+  MOONBEAM_TESTNET = 1287,
+  AVALANCHE = 43114,
+  AVALANCHE_TESTNET = 43113,
+  FANTOM = 250,
+  FANTOM_TESTNET = 4002,
+  SOLANA_DEVNET = 69420,
+  SOLANA_MAINNET = 1399811149,
 }
 
 export const chainIdLookup: Lookup<string, ChainId> = {
   ethereum: ChainId.ETHEREUM,
-  arbitrum: ChainId.ARBITRUM,
-  optimism: ChainId.OPTIMISM,
-  zora: ChainId.ZORA,
-  base: ChainId.BASE,
-  zoraGoerli: ChainId.ZORA_GOERLI,
   sepolia: ChainId.SEPOLIA,
+  goerli: ChainId.GOERLI,
+  optimism: ChainId.OPTIMISM,
+  optimismTestnet: ChainId.OPTIMISM_TESTNET,
+  polygon: ChainId.POLYGON,
+  polygonTestnet: ChainId.POLYGON_TESTNET,
+  arbitrum: ChainId.ARBITRUM,
+  arbitrumTestnet: ChainId.ARBITRUM_TESTNET,
+  base: ChainId.BASE,
+  zora: ChainId.ZORA,
+  zoraGoerli: ChainId.ZORA_GOERLI,
+  baseTestnet: ChainId.BASE_TESTNET,
+  moonbeam: ChainId.MOONBEAM,
+  moonbeamTestnet: ChainId.MOONBEAM_TESTNET,
+  avalanche: ChainId.AVALANCHE,
+  avalancheTestnet: ChainId.AVALANCHE_TESTNET,
+  fantom: ChainId.FANTOM,
+  fantomTestnet: ChainId.FANTOM_TESTNET,
+  solanaDevnet: ChainId.SOLANA_DEVNET,
+  solana: ChainId.SOLANA_MAINNET,
 };
 
 export type Lookup<A extends string | number | symbol, B> = {

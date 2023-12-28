@@ -142,7 +142,7 @@ export const dumpGlueConfig = async () => {
       }
       const chainId = chainIdLookup[fork.chain];
       if (!chainId) {
-        throw Error(`no chainid? ${fork.chain}`);
+        throw Error(`Houndry Toolkit: no chainId found for ${fork.chain}`);
       }
       return {
         id: chainId,
