@@ -1,7 +1,6 @@
-import { writeFile, openSync } from "fs";
+import { openSync, writeFile } from "fs";
 import { spawn } from "child_process";
 import { exec } from "shelljs";
-import { Base } from "hardhat/internal/hardhat-network/provider/modules/base";
 
 export enum ChainId {
   ETHEREUM = 1,
