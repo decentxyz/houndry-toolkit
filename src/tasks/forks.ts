@@ -120,7 +120,7 @@ export const saveAndStartGlue = async () => {
 
 export const kickOffGlueService = async () => {
   await stopGlueService();
-  mkdir(".forks");
+  mkdir("-p", ".forks");
   const gluePid = startCmd(GLUE_CMD, ".forks/glue.log");
   await dumpJson(GLUE_PID, { pid: gluePid });
 };

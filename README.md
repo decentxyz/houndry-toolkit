@@ -36,7 +36,7 @@ AVAILABLE TASKS:
   start-fork         	starts a fork of a chain
   start-forks        	starts forks of multiple chains
   start-glue         	starts the glue service
-  stop-all-forks     	lists all running forks
+  stop-all-forks     	stops all running forks
   stop-fork
   stop-glue          	starts the glue service
 ```
