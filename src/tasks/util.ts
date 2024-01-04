@@ -108,6 +108,8 @@ export const startCmd = (cmd: string, file: string) => {
   return pid;
 };
 
+export const killAll = (pid: number) => exec(`pkill -f anvil ; pkill -f glue`);
+
 export const killProcess = (pid: number) => exec(`kill -9 ${pid}`);
 
 export const killIfExists = (pid: number | undefined) => {

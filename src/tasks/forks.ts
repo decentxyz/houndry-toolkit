@@ -3,6 +3,7 @@ import {
   dumpJson,
   getRpc,
   killProcess,
+  killAll,
   Lookup,
   processExists,
   startCmd,
@@ -188,6 +189,10 @@ task("stop-glue", "starts the glue service", async ({ chains }) => {
   await stopGlueService();
 });
 
+task("kill-forks", "kills all forks and glue service", async ({ chains }) => {
+  await killAll();
+});
+
 task("list-forks", "lists all running forks", async () => {
   const forks = await getForks();
   Object.values(forks).forEach((fork) => {
@@ -199,7 +204,7 @@ task("list-forks", "lists all running forks", async () => {
   });
 });
 
-task("stop-all-forks", "lists all running forks", async (task, hre) => {
+task("stop-all-forks", "stops all running forks", async (task, hre) => {
   const forks = await getForks();
   Object.values(forks).forEach((fork) => {
     if (!fork) {
