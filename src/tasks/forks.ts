@@ -14,9 +14,10 @@ import { mkdir } from "shelljs";
 
 const GLUE_CONFIG = "glueConfig.json";
 
-const name = "houndry-toolkit";
-const path = __dirname.substring(0, __dirname.lastIndexOf(name));
-const GLUE_CMD = `${path}/${name}/node_modules/.bin/forknet-glue`;
+const PROJECT_NAME = "houndry-toolkit";
+const BASE_DIR = __dirname
+  .substring(0, __dirname.lastIndexOf(PROJECT_NAME) + PROJECT_NAME.length);
+const GLUE_CMD = `${BASE_DIR}/node_modules/.bin/forknet-glue`;
 const GLUE_PID = "glue.pid";
 
 type ForkInfo = {
